@@ -10,7 +10,7 @@ public class CharaControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -22,23 +22,31 @@ public class CharaControl : MonoBehaviour
     {
         float x = Input.GetAxis("Horizontal");
         Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
-        // AddForceメソッドに渡すために、Vector2型に変換
-        Vector2 movement = new Vector2(x, 0);
-        rigidbody.AddForce(movement * speed);
         Animator anim = GetComponent<Animator>();
+        if (x != 0)
+        {
+            Vector2 movement = new Vector2(x, 0);
+            rigidbody.AddForce(movement * speed);
+            anim.SetBool("Dash", true);
+        }
+        else
+        {
+            anim.SetBool("Dash", false);
+        }
+
 
         if (Input.GetKeyDown("space") && isJumping)
-		{
-			rigidbody.AddForce(Vector2.up * jumpForce,ForceMode2D.Impulse);
-			// 一度ジャンプしたらisJumpingをfalseにする。
-			isJumping = false;
-		}
+        {
+            rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            // 一度ジャンプしたらisJumpingをfalseにする。
+            isJumping = false;
+        }
         if (transform.position.x > mainCamera.transform.position.x - 4)
-            {
-                Vector3 cameraPos = mainCamera.transform.position;
-                cameraPos.x = transform.position.x + 4;
-                mainCamera.transform.position = cameraPos;
-            }
+        {
+            Vector3 cameraPos = mainCamera.transform.position;
+            cameraPos.x = transform.position.x + 4;
+            mainCamera.transform.position = cameraPos;
+        }
         Vector2 min = Camera.main.ViewportToWorldPoint(new Vector2(0, 0));
         Vector2 max = Camera.main.ViewportToWorldPoint(new Vector2(1, 1));
         Vector2 pos = transform.position;
@@ -48,13 +56,13 @@ public class CharaControl : MonoBehaviour
 
     }
     void OnCollisionEnter2D(Collision2D collision)
-	{
-		// Groundタグを地面に付け、地面に衝突したらisJumpingをtrueにする。
-		if(collision.gameObject.CompareTag("Ground"))
+    {
+        // Groundタグを地面に付け、地面に衝突したらisJumpingをtrueにする。
+        if (collision.gameObject.CompareTag("Ground"))
         {
-			isJumping = true;
-		}
-	}
+            isJumping = true;
+        }
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
